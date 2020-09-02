@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Library for detecting a blob based on a color range filter in HSV space
 
@@ -44,7 +46,10 @@ def blob_detect(image,                  #-- The frame (cv standard)
     hsv     = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     
     #- Apply HSV threshold
-    mask    = cv2.inRange(hsv,hsv_min, hsv_max)
+    #print(hsv)
+    hsv_min = np.array(hsv_min)
+    hsv_max = np.array(hsv_max)
+    mask = cv2.inRange(hsv,hsv_min, hsv_max)
     
     #- Show HSV Mask
     if imshow:
@@ -124,7 +129,6 @@ def draw_keypoints(image,                   #-- Input image
     
     #-- Draw detected blobs as red circles.
     #-- cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
-    print(keypoints)
     im_with_keypoints = cv2.drawKeypoints(image, keypoints, np.array([]), line_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
  
     if imshow:
@@ -256,7 +260,7 @@ if __name__=="__main__":
     
     #-- IMAGE_SOURCE: either 'camera' or 'imagelist'
     SOURCE = 'video'
-    #SOURCE = 'camera'
+    SOURCE = 'camera'
     
     if SOURCE == 'video':
         cap = cv2.VideoCapture("/dev/video2")
@@ -286,7 +290,7 @@ if __name__=="__main__":
 
         for image in image_list:
             #-- Detect keypoints
-            keypoints, _ = blob_detect(image, blue_min, blue_max, blur=5, 
+            keypoints, _ = blob_detect(image, lower_hsv, upper_hsv, blur=5, 
                                         blob_params=None, search_window=window, imshow=True)
             
             image    = blur_outside(image, blur=15, window_adim=window)
